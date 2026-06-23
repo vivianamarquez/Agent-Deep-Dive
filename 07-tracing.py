@@ -6,6 +6,9 @@ Run from the repo root:
 Optional:
     python 07-tracing.py "Where is the ISS and how fast is it moving?"
 
+View traces:
+    https://platform.openai.com/traces
+
 Requires:
     pip install -r requirements.txt
 """
