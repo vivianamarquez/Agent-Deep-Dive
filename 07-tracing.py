@@ -93,7 +93,7 @@ async def main():
 
     task = " ".join(sys.argv[1:]) or DEFAULT_TASK
 
-    with trace("07 ISS tracing demo", metadata={"lesson": "07", "topic": "tracing"}):
+    with trace("June 23 example", metadata={"lesson": "07", "topic": "tracing"}):
         with custom_span("prepare user task", {"task": task}):
             print("Task prepared:", task)
 
