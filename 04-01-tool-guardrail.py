@@ -1,13 +1,13 @@
 """Beginner-friendly agent with a tool guardrail.
 
 Run from the repo root:
-    python 04-tool-guardrail.py
+    python 04-01-tool-guardrail.py
 
 Try an allowed tool call:
-    python 04-tool-guardrail.py "Preheat the oven to 350 degrees."
+    python 04-01-tool-guardrail.py "Preheat the oven to 350 degrees."
 
 Try a blocked tool call:
-    python 04-tool-guardrail.py "Preheat the oven to 900 degrees."
+    python 04-01-tool-guardrail.py "Preheat the oven to 900 degrees."
 
 Requires:
     pip install -r requirements.txt
