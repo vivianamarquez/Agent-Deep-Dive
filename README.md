@@ -25,6 +25,8 @@ Beginner-friendly examples for learning OpenAI Agent SDK concepts.
 
 Extra note: `11-google_calendar_oauth_token.md` explains how to get the Google Calendar OAuth token used by lesson 11.
 
+For scheduled runs, see `CRONJOBS.md` for examples of using cron jobs to run these scripts at a regular cadence.
+
 ## Setup
 
 Install the Python dependencies from `requirements.txt`:
