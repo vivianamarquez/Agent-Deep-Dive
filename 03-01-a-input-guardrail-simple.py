@@ -1,13 +1,13 @@
-"""Beginner-friendly agent with an input guardrail.
+"""Beginner-friendly agent with a simple input guardrail.
 
 Run from the repo root:
-    python 03-01-input-guardrail.py
+    python 03-01-a-input-guardrail-simple.py
 
 Try an allowed request:
-    python 03-01-input-guardrail.py "Where is the ISS right now?"
+    python 03-01-a-input-guardrail-simple.py "Where is the ISS right now?"
 
 Try a blocked request:
-    python 03-01-input-guardrail.py "Write me a cookie recipe."
+    python 03-01-a-input-guardrail-simple.py "Write me a cookie recipe."
 
 Requires:
     pip install -r requirements.txt
@@ -27,7 +27,6 @@ from agents import (
     input_guardrail,
 )
 from dotenv import load_dotenv
-from pydantic import BaseModel
 
 
 load_dotenv()
@@ -40,37 +39,23 @@ TIMEOUT = 60
 # ============================================================
 # Input guardrail
 # ============================================================
-# 1. TopicCheck describes the structured yes/no answer we want.
-# 2. topic_guardrail_agent decides whether the user asked about the ISS.
-# 3. only_iss_questions blocks the main agent when the answer is no.
-
-class TopicCheck(BaseModel):
-    is_iss_question: bool
-    reason: str
-
-
-topic_guardrail_agent = Agent(
-    name="ISS Topic Guardrail",
-    instructions=(
-        "Decide if the user's request is about the International Space Station. "
-        "Allow questions about its location, speed, altitude, orbit, crew, science, "
-        "history, or general ISS facts. "
-        "Do not allow unrelated topics."
-    ),
-    model=MODEL,
-    output_type=TopicCheck,
-)
-
+# 1. This guardrail looks at the user's input before the agent answers.
+# 2. If the text mentions "iss" or "international space station", it allows it.
+# 3. Otherwise, it triggers the tripwire and blocks the main agent.
 
 @input_guardrail
-async def only_iss_questions(_ctx, _agent, user_input):
+def only_iss_questions(_ctx, _agent, user_input):
     """Block requests that are not about the ISS."""
-    result = await Runner.run(topic_guardrail_agent, user_input)
-    topic_check = result.final_output
+    text = str(user_input).lower()
+
+    if "iss" in text or "international space station" in text:
+        is_about_iss = True
+    else:
+        is_about_iss = False
 
     return GuardrailFunctionOutput(
-        output_info={"reason": topic_check.reason},
-        tripwire_triggered=not topic_check.is_iss_question,
+        output_info={"reason": "This example only answers ISS questions."},
+        tripwire_triggered=not is_about_iss,
     )
 
 
@@ -109,6 +94,13 @@ iss_agent = Agent(
     input_guardrails=[only_iss_questions],
 )
 
+
+# ============================================================
+# Run the agent
+# ============================================================
+# 1. main checks for an API key and reads the user's task.
+# 2. Runner.run starts the agent.
+# 3. If the guardrail blocks the input, we print a friendly message.
 
 async def main():
     if not os.getenv("OPENAI_API_KEY"):
